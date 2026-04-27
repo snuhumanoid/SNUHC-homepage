@@ -165,36 +165,29 @@ export default function AdminPage() {
     setShowForm(true);
   };
 
-  const [saving, setSaving] = useState(false);
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      if (tab === 'news') {
-        if (editingId) await updateNews(editingId, newsForm); else await addNews(newsForm);
-      }
-      if (tab === 'history') {
-        if (editingId) await updateHistory(editingId, historyForm); else await addHistory(historyForm);
-      }
-      if (tab === 'gallery') {
-        if (editingId) await updateGallery(editingId, galleryForm); else await addGallery(galleryForm);
-      }
-      if (tab === 'members') {
-        if (editingId) await updateMember(editingId, memberForm); else await addMember(memberForm);
-      }
-      setShowForm(false);
-      setEditingId(null);
-    } finally {
-      setSaving(false);
+  const handleSave = () => {
+    if (tab === 'news') {
+      if (editingId) updateNews(editingId, newsForm); else addNews(newsForm);
     }
+    if (tab === 'history') {
+      if (editingId) updateHistory(editingId, historyForm); else addHistory(historyForm);
+    }
+    if (tab === 'gallery') {
+      if (editingId) updateGallery(editingId, galleryForm); else addGallery(galleryForm);
+    }
+    if (tab === 'members') {
+      if (editingId) updateMember(editingId, memberForm); else addMember(memberForm);
+    }
+    setShowForm(false);
+    setEditingId(null);
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!confirm(t('삭제하시겠습니까?', 'Are you sure you want to delete this item?'))) return;
-    if (tab === 'news') await deleteNews(id);
-    if (tab === 'history') await deleteHistory(id);
-    if (tab === 'gallery') await deleteGallery(id);
-    if (tab === 'members') await deleteMember(id);
+    if (tab === 'news') deleteNews(id);
+    if (tab === 'history') deleteHistory(id);
+    if (tab === 'gallery') deleteGallery(id);
+    if (tab === 'members') deleteMember(id);
   };
 
   const inputStyle: React.CSSProperties = {
@@ -418,9 +411,9 @@ export default function AdminPage() {
               >
                 {t('취소', 'Cancel')}
               </button>
-              <button onClick={handleSave} className="btn-primary" style={{ fontSize: 14 }} disabled={saving}>
+              <button onClick={handleSave} className="btn-primary" style={{ fontSize: 14 }}>
                 <Save size={16} />
-                {saving ? t('저장 중...', 'Saving...') : t('저장', 'Save')}
+                {t('저장', 'Save')}
               </button>
             </div>
           </div>

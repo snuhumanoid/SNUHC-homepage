@@ -14,79 +14,82 @@ export default function History() {
     <section
       id="history"
       style={{
-        padding: '7rem 3rem',
-        background: '#fcf9f8',
-        borderTop: '1px solid rgba(203, 195, 217, 0.3)',
+        padding: '7rem 1.5rem',
+        background: 'rgba(99,102,241,0.02)',
+        borderTop: '1px solid rgba(255,255,255,0.04)',
+        borderBottom: '1px solid rgba(255,255,255,0.04)',
       }}
     >
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-
-        {/* Section header */}
-        <div style={{ marginBottom: '5rem' }}>
-          <p className="section-label" style={{ marginBottom: '1.25rem' }}>
-            04 — {t('연혁', 'History')}
+      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <p style={{
+            fontSize: 13, fontWeight: 700, letterSpacing: '0.15em',
+            color: '#6366f1', marginBottom: '1rem', textTransform: 'uppercase',
+          }}>
+            {t('연혁', 'History')}
           </p>
-          <h2 className="section-title">
-            {t('우리의 발자취', 'Our Journey')}
+          <h2 className="section-title" style={{ color: '#f1f5f9' }}>
+            {t('우리의 ', 'Our ')}
+            <span className="gradient-text">{t('발자취', 'Journey')}</span>
           </h2>
         </div>
 
         {/* Timeline */}
-        <div style={{ maxWidth: 760 }}>
+        <div style={{ position: 'relative', paddingLeft: '3rem' }}>
+          {/* Vertical line */}
+          <div style={{
+            position: 'absolute',
+            left: '6px',
+            top: 0, bottom: 0,
+            width: 2,
+            background: 'linear-gradient(to bottom, #6366f1, rgba(99,102,241,0.1))',
+          }} />
+
           {data.history.length === 0 ? (
-            <div style={{
-              padding: '3rem',
-              border: '1px solid rgba(203, 195, 217, 0.3)',
-              borderRadius: 12,
-              textAlign: 'center',
-            }}>
-              <p style={{ color: '#7a7488', fontSize: 14 }}>
-                {t('히스토리가 없습니다.', 'No history available.')}
-              </p>
-            </div>
+            <p style={{ color: '#64748b' }}>{t('히스토리가 없습니다.', 'No history available.')}</p>
           ) : (
             data.history.map((item, i) => (
               <div
                 key={item.id}
-                className="border-hover-item"
                 style={{
-                  display: 'flex',
-                  gap: '2.5rem',
-                  paddingBottom: i < data.history.length - 1 ? '3rem' : 0,
-                  marginBottom: i < data.history.length - 1 ? '1px' : 0,
-                  borderBottom: i < data.history.length - 1
-                    ? '1px solid rgba(203, 195, 217, 0.25)'
-                    : 'none',
+                  position: 'relative',
+                  marginBottom: i < data.history.length - 1 ? '3rem' : 0,
+                  opacity: 1,
+                  transition: 'opacity 0.3s ease',
                 }}
               >
-                {/* Year column */}
-                <div style={{ flexShrink: 0, width: 100, paddingTop: '0.2rem' }}>
-                  <span style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#4800b2',
-                    textTransform: 'uppercase',
-                  }}>
-                    {item.year}
-                    {item.month
-                      ? `.${language === 'ko' ? MONTHS_KO[item.month - 1] : MONTHS_EN[item.month - 1]}`
-                      : ''}
-                  </span>
-                </div>
+                {/* Dot */}
+                <div className="timeline-dot" />
 
                 {/* Content */}
-                <div style={{ flex: 1, paddingBottom: '0.5rem' }}>
+                <div
+                  className="glass glass-hover"
+                  style={{ padding: '1.5rem 2rem', borderRadius: 16 }}
+                >
+                  {/* Date */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '0.75rem',
+                    marginBottom: '0.75rem',
+                  }}>
+                    <span style={{
+                      fontSize: 13, fontWeight: 700,
+                      color: '#6366f1',
+                      background: 'rgba(99,102,241,0.12)',
+                      border: '1px solid rgba(99,102,241,0.25)',
+                      padding: '2px 10px', borderRadius: 999,
+                    }}>
+                      {item.year}
+                      {item.month ? `. ${language === 'ko' ? MONTHS_KO[item.month - 1] : MONTHS_EN[item.month - 1]}` : ''}
+                    </span>
+                  </div>
+
                   <h3 style={{
-                    fontSize: 18,
-                    fontWeight: 700,
-                    letterSpacing: '-0.02em',
-                    color: '#1c1b1b',
-                    marginBottom: '0.5rem',
+                    fontSize: 18, fontWeight: 700,
+                    color: '#f1f5f9', marginBottom: '0.5rem',
                   }}>
                     {t(item.titleKo, item.titleEn)}
                   </h3>
-                  <p style={{ color: '#636262', fontSize: 14, lineHeight: 1.7 }}>
+                  <p style={{ color: '#94a3b8', fontSize: 14, lineHeight: 1.7 }}>
                     {t(item.descriptionKo, item.descriptionEn)}
                   </p>
                 </div>

@@ -5,6 +5,15 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useData } from '@/contexts/DataContext';
 import { X, Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 
+const PLACEHOLDER_COLORS = [
+  ['#6366f1', '#8b5cf6'],
+  ['#8b5cf6', '#06b6d4'],
+  ['#06b6d4', '#10b981'],
+  ['#f59e0b', '#ef4444'],
+  ['#10b981', '#6366f1'],
+  ['#ef4444', '#f59e0b'],
+];
+
 export default function Gallery() {
   const { t } = useLanguage();
   const { data } = useData();
@@ -25,76 +34,73 @@ export default function Gallery() {
   };
 
   return (
-    <section
-      id="gallery"
-      style={{
-        padding: '7rem 3rem',
-        background: '#f6f3f2',
-        borderTop: '1px solid rgba(203, 195, 217, 0.3)',
-      }}
-    >
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+    <section id="gallery" style={{ padding: '7rem 1.5rem', maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+        <p style={{
+          fontSize: 13, fontWeight: 700, letterSpacing: '0.15em',
+          color: '#6366f1', marginBottom: '1rem', textTransform: 'uppercase',
+        }}>
+          {t('활동 갤러리', 'Gallery')}
+        </p>
+        <h2 className="section-title" style={{ color: '#f1f5f9' }}>
+          {t('우리의 ', 'Our ')}
+          <span className="gradient-text">{t('순간들', 'Moments')}</span>
+        </h2>
+      </div>
 
-        {/* Section header */}
-        <div style={{ marginBottom: '4rem' }}>
-          <p className="section-label" style={{ marginBottom: '1.25rem' }}>
-            05 — {t('활동 갤러리', 'Gallery')}
-          </p>
-          <h2 className="section-title">
-            {t('우리의 순간들', 'Our Moments')}
-          </h2>
-        </div>
-
-        {items.length === 0 ? (
-          <div style={{
-            padding: '4rem',
-            textAlign: 'center',
-            border: '1px solid rgba(203, 195, 217, 0.3)',
-            borderRadius: 12,
-            background: '#fcf9f8',
-          }}>
-            <p style={{ color: '#7a7488', fontSize: 14 }}>
-              {t('갤러리 사진이 없습니다.', 'No gallery items available.')}
-            </p>
-          </div>
-        ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '1px',
-            background: 'rgba(203, 195, 217, 0.3)',
-            border: '1px solid rgba(203, 195, 217, 0.3)',
-            borderRadius: 12,
-            overflow: 'hidden',
-          }}>
-            {items.map((item, idx) => (
+      {items.length === 0 ? (
+        <p style={{ textAlign: 'center', color: '#64748b' }}>
+          {t('갤러리 사진이 없습니다.', 'No gallery items available.')}
+        </p>
+      ) : (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: '1.25rem',
+        }}>
+          {items.map((item, idx) => {
+            const colors = PLACEHOLDER_COLORS[idx % PLACEHOLDER_COLORS.length];
+            return (
               <div
                 key={item.id}
                 onClick={() => setLightboxIdx(idx)}
                 style={{
-                  cursor: 'pointer',
-                  background: '#fcf9f8',
-                  transition: 'background 0.3s ease',
+                  borderRadius: 16,
                   overflow: 'hidden',
+                  cursor: 'pointer',
+                  background: '#12121a',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  transition: 'all 0.3s ease',
+                  position: 'relative',
                 }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = '#f0edec'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = '#fcf9f8'; }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-6px)';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 60px rgba(99,102,241,0.2)';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(99,102,241,0.3)';
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.transform = '';
+                  (e.currentTarget as HTMLElement).style.boxShadow = '';
+                  (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.06)';
+                }}
               >
-                {/* Image */}
+                {/* Image / Placeholder */}
                 <div style={{
                   width: '100%',
                   paddingBottom: '66%',
                   position: 'relative',
-                  background: item.imageUrl ? undefined : 'rgba(203, 195, 217, 0.2)',
+                  background: item.imageUrl
+                    ? `url(${item.imageUrl}) center/cover`
+                    : `linear-gradient(135deg, ${colors[0]}30, ${colors[1]}30)`,
                   overflow: 'hidden',
                 }}>
                   {!item.imageUrl && (
                     <div style={{
                       position: 'absolute', inset: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 40, color: '#cbc3d9',
+                      fontSize: 48,
                     }}>
-                      □
+                      🤖
                     </div>
                   )}
                   {item.imageUrl && (
@@ -107,29 +113,23 @@ export default function Gallery() {
                 </div>
 
                 {/* Info */}
-                <div style={{ padding: '1.25rem 1.25rem 1.5rem' }}>
-                  <h3 style={{
-                    fontSize: 15,
-                    fontWeight: 700,
-                    letterSpacing: '-0.02em',
-                    color: '#1c1b1b',
-                    marginBottom: 4,
-                  }}>
+                <div style={{ padding: '1.25rem' }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: '#f1f5f9', marginBottom: 6 }}>
                     {t(item.titleKo, item.titleEn)}
                   </h3>
-                  <p style={{ fontSize: 12, color: '#636262', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+                  <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.5, marginBottom: '0.75rem' }}>
                     {t(item.descriptionKo, item.descriptionEn)}
                   </p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#7a7488', fontSize: 11 }}>
-                    <Calendar size={11} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#475569', fontSize: 12 }}>
+                    <Calendar size={12} />
                     {formatDate(item.date)}
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Lightbox */}
       {lightboxIdx !== null && items[lightboxIdx] && (
@@ -139,8 +139,8 @@ export default function Gallery() {
           tabIndex={0}
           style={{
             position: 'fixed', inset: 0, zIndex: 2000,
-            background: 'rgba(28, 27, 27, 0.85)',
-            backdropFilter: 'blur(16px)',
+            background: 'rgba(0,0,0,0.95)',
+            backdropFilter: 'blur(12px)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             padding: '1rem',
             outline: 'none',
@@ -150,14 +150,14 @@ export default function Gallery() {
             onClick={() => setLightboxIdx(null)}
             style={{
               position: 'fixed', top: 20, right: 20,
-              background: '#fcf9f8',
-              border: '1px solid rgba(203, 195, 217, 0.4)',
-              borderRadius: 6, padding: 8,
-              color: '#1c1b1b', cursor: 'pointer',
+              background: 'rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: 10, padding: 8,
+              color: '#f1f5f9', cursor: 'pointer',
               display: 'flex',
             }}
           >
-            <X size={18} />
+            <X size={20} />
           </button>
 
           {lightboxIdx > 0 && (
@@ -165,13 +165,14 @@ export default function Gallery() {
               onClick={(e) => { e.stopPropagation(); prev(); }}
               style={{
                 position: 'fixed', left: 20, top: '50%', transform: 'translateY(-50%)',
-                background: '#fcf9f8',
-                border: '1px solid rgba(203, 195, 217, 0.4)',
-                borderRadius: 6, padding: 10,
-                color: '#1c1b1b', cursor: 'pointer', display: 'flex',
+                background: 'rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 10, padding: 10,
+                color: '#f1f5f9', cursor: 'pointer',
+                display: 'flex',
               }}
             >
-              <ChevronLeft size={18} />
+              <ChevronLeft size={20} />
             </button>
           )}
 
@@ -180,31 +181,28 @@ export default function Gallery() {
               onClick={(e) => { e.stopPropagation(); next(); }}
               style={{
                 position: 'fixed', right: 20, top: '50%', transform: 'translateY(-50%)',
-                background: '#fcf9f8',
-                border: '1px solid rgba(203, 195, 217, 0.4)',
-                borderRadius: 6, padding: 10,
-                color: '#1c1b1b', cursor: 'pointer', display: 'flex',
+                background: 'rgba(255,255,255,0.1)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: 10, padding: 10,
+                color: '#f1f5f9', cursor: 'pointer',
+                display: 'flex',
               }}
             >
-              <ChevronRight size={18} />
+              <ChevronRight size={20} />
             </button>
           )}
 
           <div
             onClick={(e) => e.stopPropagation()}
-            style={{
-              maxWidth: 700, width: '100%',
-              background: '#fcf9f8',
-              borderRadius: 12,
-              border: '1px solid rgba(203, 195, 217, 0.4)',
-              overflow: 'hidden',
-            }}
+            style={{ maxWidth: 700, width: '100%' }}
           >
             {/* Image */}
             <div style={{
-              width: '100%', paddingBottom: '60%',
+              width: '100%', paddingBottom: '62%',
               position: 'relative',
-              background: 'rgba(203, 195, 217, 0.15)',
+              borderRadius: 16, overflow: 'hidden',
+              background: `linear-gradient(135deg, ${PLACEHOLDER_COLORS[lightboxIdx % PLACEHOLDER_COLORS.length][0]}30, ${PLACEHOLDER_COLORS[lightboxIdx % PLACEHOLDER_COLORS.length][1]}30)`,
+              marginBottom: '1.25rem',
             }}>
               {items[lightboxIdx].imageUrl ? (
                 <img
@@ -213,37 +211,25 @@ export default function Gallery() {
                   style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               ) : (
-                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 60, color: '#cbc3d9' }}>
-                  □
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 72 }}>
+                  🤖
                 </div>
               )}
             </div>
 
-            <div style={{ padding: '1.5rem 2rem 2rem' }}>
-              <h3 style={{
-                fontSize: 20,
-                fontWeight: 800,
-                letterSpacing: '-0.03em',
-                color: '#1c1b1b',
-                marginBottom: 8,
-              }}>
-                {t(items[lightboxIdx].titleKo, items[lightboxIdx].titleEn)}
-              </h3>
-              <p style={{ color: '#636262', lineHeight: 1.7, marginBottom: 12, fontSize: 14 }}>
-                {t(items[lightboxIdx].descriptionKo, items[lightboxIdx].descriptionEn)}
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <p style={{ fontSize: 12, color: '#7a7488', display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <Calendar size={12} />
-                  {formatDate(items[lightboxIdx].date)}
-                </p>
-                <span style={{
-                  fontSize: 10, fontWeight: 700,
-                  color: '#4800b2', letterSpacing: '0.15em', textTransform: 'uppercase',
-                }}>
-                  {lightboxIdx + 1} / {items.length}
-                </span>
-              </div>
+            <h3 style={{ fontSize: 22, fontWeight: 800, color: '#f1f5f9', marginBottom: 8 }}>
+              {t(items[lightboxIdx].titleKo, items[lightboxIdx].titleEn)}
+            </h3>
+            <p style={{ color: '#94a3b8', lineHeight: 1.7, marginBottom: 12 }}>
+              {t(items[lightboxIdx].descriptionKo, items[lightboxIdx].descriptionEn)}
+            </p>
+            <p style={{ fontSize: 13, color: '#475569', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Calendar size={13} />
+              {formatDate(items[lightboxIdx].date)}
+            </p>
+
+            <div style={{ textAlign: 'center', marginTop: 16, color: '#475569', fontSize: 13 }}>
+              {lightboxIdx + 1} / {items.length}
             </div>
           </div>
         </div>
